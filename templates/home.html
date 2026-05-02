@@ -1,0 +1,43 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Job Search</title>
+</head>
+<body>
+    <h2>Welcome! Looking for another challenge in your career</h2>
+    <input type="text" id = "searchInput" placeholder="Enter skill">
+    <button onclick="searchJobs()">Search</button>
+
+    <div id="result"></div>
+
+    <script>
+
+        async function searchJobs(){
+
+            const searchValue = document.getElementById("searchInput").value;
+            const response = await fetch(`result/?search=${searchValue}`);
+            const jobs = await response.json();
+            console.log(typeof jobs);
+            console.log(jobs);
+
+
+            let output = "";
+
+            if (jobs.length === 0){
+                output = "<h3>No jobs found</h3>";
+                }
+
+            jobs.forEach(job => {
+
+                output += `
+                    <h3>${job.title}</h3>
+                    <p>${job.company}</p>
+                    <hr>`;
+                    });
+                    document.getElementById("result").innerHTML = output;
+            }
+
+    </script>
+</body>
+</html>
