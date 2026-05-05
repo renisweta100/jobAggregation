@@ -5,9 +5,13 @@
     <title>Job Search</title>
 </head>
 <body>
+
+
     <h2>Welcome! Looking for another challenge in your career</h2>
+    <div style="text-align:center;">
     <input type="text" id = "searchInput" placeholder="Enter skill">
     <button onclick="searchJobs()">Search</button>
+    </div>
 
     <div id="result"></div>
 
@@ -39,5 +43,189 @@
             }
 
     </script>
+
+
+<br><br>
+
+<button onclick="showSignup()">Sign Up</button>
+
+    <div id="signupForm" style="display:none;">
+        <h2>Create an Account</h2>
+        <input
+                type="text"
+                id="signupUsername"
+                placeholder="Enter username"
+        >
+
+<br><br>
+
+        <input
+            type="email"
+            id="signupEmail"
+            placeholder="Enter email"
+        >
+
+<br><br>
+
+        <input
+            type="password"
+            id="signupPassword"
+            placeholder="Enter password"
+        >
+
+<br><br>
+
+<button onclick="signupUser()">Create Account</button>
+
+</div>
+    <p id="signupMessage"></p>
+<script>
+
+    function showSignup() {
+
+    const form =
+        document.getElementById(
+            "signupForm"
+        );
+
+    if (form.style.display === "none") {
+
+        form.style.display = "block";
+
+    } else {
+
+        form.style.display = "none";
+    }
+}
+
+async function signupUser() {
+
+    const username =document.getElementById("signupUsername").value;
+
+    const email =document.getElementById("signupEmail").value;
+
+
+    const password =document.getElementById("signupPassword").value;
+
+    const response = await fetch("/api/auth/signup/",
+        {
+
+            method: "POST",
+
+            headers: {
+                "Content-Type":
+                "application/json"
+            },
+
+            body: JSON.stringify({
+
+                username: username,
+                email: email,
+                password: password
+            })
+        }
+    );
+
+    const data = await response.json();
+        if (response.ok)
+        {
+            document.getElementById("signupMessage").innerHTML = data.message;
+            document.getElementById("signupForm").style.display="none";
+        }
+        else  {
+
+    let errorMessage = "";
+
+    for (let key in data) {
+
+        errorMessage +=
+            data[key][0] + "<br>" ;
+    }
+
+    document.getElementById(
+        "signupMessage"
+    ).innerHTML =
+        errorMessage;
+}
+
+}
+
+
+
+</script>
+
+
+<br><br>
+
+<button onclick="showLogin()">Login</button>
+    <div id="LoginForm" style="display:none;">
+        <h2>Already a User</h2>
+
+    <input
+        type="text"
+        id="LoginUsername"
+        placeholder="Enter username"
+    >
+        <br><br>
+
+    <input
+        type="password"
+        id="LoginPassword"
+        placeholder="Enter password"
+    >
+
+<br><br>
+
+<button onclick="LoginUser()">Login</button>
+
+</div>
+<script>
+
+function showLogin() {
+
+    const form =
+        document.getElementById(
+            "LoginForm"
+        );
+
+    if (form.style.display === "none") {
+
+        form.style.display = "block";
+
+    } else {
+
+        form.style.display = "none";
+    }
+}
+
+
+async function LoginUser(){
+
+    const username=document.getElementById("LoginUsername").value;
+    const password=document.getElementById("LoginPassword").value;
+
+    const response = await fetch("/api/token",
+        {
+	        method:"POST",
+	        headers:
+		        {"Content-Type":"application/json"},
+			    body: JSON.stringify
+			({
+				username:username,
+				password:password
+			})
+        }
+							);
+
+const data = await response.json();
+
+console.log(data);
+localStorage.setItem('accessToken',data.access);
+}
+
+
+</script>
+
+
 </body>
 </html>

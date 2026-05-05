@@ -35,7 +35,7 @@ def signup(request):
     if serializer_signup.is_valid():
         serializer_signup.save()
 
-        return Response({"message":"created"})
+        return Response({"message":"User Created"})
     return Response(serializer_signup.errors,status=400)
 
 
