@@ -1,33 +1,267 @@
 <!DOCTYPE html>
-<html lang="en">
+<html>
+
 <head>
-    <meta charset="UTF-8">
-    <title>Job Search</title>
+
+    <title>Job Platform</title>
+
+    <style>
+
+        body {
+            background-color: RosyBrown;
+            margin: 0;
+            font-family: Arial;
+        }
+
+
+        .search-box {
+    background-color: RosyBrown;
+    display: flex;
+
+    flex-direction: column;
+
+    justify-content: center;
+
+    align-items: center;
+
+    margin-top: 150px;
+}
+
+.search-box button {
+    background-color: sienna;
+    margin-top: 20px;
+
+    padding: 12px 24px;
+
+    border: none;
+
+    border-radius: 5px;
+
+    cursor: pointer;
+}
+
+.search-box input {
+
+    width: 400px;
+
+    padding: 12px;
+
+    margin-top: 20px;
+
+    border-radius: 5px;
+
+    border: 1px solid gray;
+}
+
+        /* NAVBAR */
+
+            .navbar {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 15px 30px;
+            background-color: BurlyWood;
+            color: sienna;
+            }
+
+
+
+
+
+
+
+        .logo {
+
+            font-size: 24px;
+            font-weight: bold;
+        }
+
+
+
+
+
+        /* PROFILE MENU */
+
+        .profile-menu {position: relative;}
+
+
+
+
+
+        .profile-btn {
+
+            padding: 10px 16px;
+
+            border: none;
+            background-color: sienna;
+
+            border-radius: 5px;
+
+            cursor: pointer;
+        }
+
+
+        /* DROPDOWN */
+
+        .dropdown-content {
+
+            display: none;
+
+            position: absolute;
+
+            right: 0;
+
+            background-color: SandyBrown;
+
+            min-width: 180px;
+
+            box-shadow: 0px 4px 10px rgba(0,0,0,0.2);
+
+            border-radius: 5px;
+
+            overflow: hidden;
+        }
+
+
+        .dropdown-content button {
+
+            width: 100%;
+
+            padding: 12px;
+
+            border: none;
+
+            background-color: Tan;
+
+            cursor: pointer;
+
+            text-align: left;
+        }
+
+
+        .dropdown-content button:hover {
+
+            background-color: SandyBrown;
+        }
+
+
+        /* SHOW DROPDOWN ON HOVER */
+
+        .profile-menu:hover
+        .dropdown-content {
+
+            display: block;
+        }
+
+
+        /* AUTH FORMS */
+
+        .modal {
+
+        display: none;
+
+        position: fixed;
+
+        top: 0;
+        left: 0;
+
+        width: 100%;
+        height: 100%;
+
+        background-color:
+        rgba(0,0,0,0.4);
+
+        justify-content: center;
+
+        align-items: center;
+    }
+
+
+    .modal-content {
+
+        background-color: white;
+
+        padding: 30px;
+
+        border-radius: 10px;
+
+        width: 300px;
+}
+
+        .blur {
+
+            filter: blur(5px);
+        }
+
+
+        .message {
+
+            margin-top: 10px;
+
+            color: DarkGoldenRod;
+        }
+
+    </style>
+
 </head>
+
 <body>
 
-<div id="loader">Loading... Please wait</div>
-<div id="content" style="display:none;">
-    <!-- your page -->
-</div>
+<div id = "mainContent">
+    <!-- NAVBAR -->
 
-<script>
-window.onload = function() {
-    document.getElementById("loader").style.display = "none";
-    document.getElementById("content").style.display = "block";
-}
-</script>
+    <div class="navbar">
+
+        <div class="logo">
+            JobHubs
+        </div>
 
 
-    <h2>Welcome! Looking for another challenge in your career</h2>
-    <div style="text-align:center;">
-    <input type="text" id = "searchInput" placeholder="Enter skill">
-    <button onclick="searchJobs()">Search</button>
+        <!-- PROFILE MENU -->
+
+        <div class="profile-menu">
+
+            <button class="profile-btn"
+            id="accountButton">
+
+                Account ▼
+
+            </button>
+
+
+            <div class="dropdown-content">
+
+                <button onclick="showLogin()">Login</button>
+                <button onclick="showSignup()">Signup</button>
+
+
+
+
+
+
+            </div>
+
+        </div>
+
     </div>
 
-    <div id="result"></div>
+</div>
 
-    <script>
+        <div class="search-box">
+        <h2>Welcome! Looking for another challenge in your career</h2>
+            <input
+                type="text"
+                placeholder="Type skill to search Jobs (eg. python)"
+                id="searchInput"
+
+            >
+                <button onclick="searchJobs()">Search</button>
+
+        </div>
+
+        <div id="result"></div>
+
+            <script>
 
         async function searchJobs(){
 
@@ -49,68 +283,367 @@ window.onload = function() {
                 output += `
                     <h3>${job.title}</h3>
                     <p>${job.company}</p>
+
+                    <button onclick="saveJob(
+                    '${job.title}',
+                    '${job.company}')">
+                    Save Job</button>
                     <hr>`;
                     });
                     document.getElementById("result").innerHTML = output;
             }
 
+
+
+
+
+/* Save jobs */
+
+       async function saveJob(title,company)
+    {
+
+        const token = localStorage.getItem("accessToken");
+        if(!token)
+            {
+                alert("Please login first");
+                return;
+            }
+
+
+
+        const response=await fetch("/api/jobs/save-jobs/",
+        {
+        method:"POST",
+        headers:{"Content-Type":"application/json",Authorization:`Bearer ${token}`},
+        body:JSON.stringify({title:title,company:company})
+        }
+    );
+        const data=await response.json();
+        console.log(data);
+    if (response.ok)
+        {
+            alert(data.message);
+        }
+    else
+        {
+            alert("Failed to save job");
+        }
+    }
+
+
+
+
+
     </script>
 
 
-<br><br>
 
-<button onclick="showSignup()">Sign Up</button>
 
-    <div id="signupForm" style="display:none;">
-        <h2>Create an Account</h2>
+
+
+
+
+
+
+<!-- LOGIN FORM -->
+
+    <div
+    id="loginModal"
+    class="modal"
+>
+
+    <div class="modal-content">
+
+        <button onclick="closeLogin()">
+            X
+        </button>
+
+
+        <h2>Login</h2>
+
         <input
-                type="text"
-                id="signupUsername"
-                placeholder="Enter username"
+            type="text"
+            placeholder="Username"
+            id="LoginUsername"
         >
-
-<br><br>
-
-        <input
-            type="email"
-            id="signupEmail"
-            placeholder="Enter email"
-        >
-
-<br><br>
 
         <input
             type="password"
-            id="signupPassword"
-            placeholder="Enter password"
+            placeholder="Password"
+            id="LoginPassword"
         >
 
-<br><br>
 
-<button onclick="signupUser()">Create Account</button>
+
+        <button onclick="LoginUser()">Submit</button>
+        <p id = "loginMessage"></p>
+
+
+
+    </div>
 
 </div>
-    <p id="signupMessage"></p>
+
+
+
+    <!-- SIGNUP FORM -->
+
+    <div
+        id="signupModal"
+        class="modal"
+    >
+        <div class = "modal-content">
+
+            <button onclick="closeSignup()">X</button>
+
+        <h2>Create Account</h2>
+
+
+        <input
+            type="text"
+            placeholder="Username"
+            id="signupUsername"
+        >
+
+
+        <input
+            type="email"
+            placeholder="Email"
+            id="signupEmail"
+        >
+
+
+        <input
+            type="password"
+            placeholder="Password"
+            id="signupPassword"
+        >
+
+        <button onclick="signupUser()">Submit</button>
+
+
+
+        <p
+            id="signupMessage"
+            class="message"
+        ></p>
+
+    </div>
+
+    </div>
+
+
+
+
+
+
+
+
 <script>
+        /* SHOW LOGIN FORM */
 
-    function showSignup() {
+        async function showLogin() {
 
-    const form =
+
+            document.getElementById("loginModal").style.display = "flex";
+            document.getElementById("mainContent").classList.add("blur");
+            }
+
+
+
+        function closeLogin() {
+
+            document.getElementById("loginModal").style.display = "none";
+            document.getElementById("mainContent").classList.remove("blur");
+            }
+
+
+
+        /* SHOW SIGNUP FORM */
+
+        async function showSignup() {
+
+
+            document.getElementById("signupModal").style.display = "flex";
+            document.getElementById("mainContent").classList.add("blur");
+            }
+
+
+        function closeSignup() {
+
+                    document.getElementById("signupModal").style.display = "none";
+                    document.getElementById("mainContent").classList.remove("blur");
+
+         }
+
+
+
+
+        /* TEMP LOGIN */
+
+        async function LoginUser(){
+
+        const username=document.getElementById("LoginUsername").value;
+        const password=document.getElementById("LoginPassword").value;
+
+        const response = await fetch("/api/token",
+            {
+	            method:"POST",
+	            headers:
+		            {"Content-Type":"application/json"},
+			        body: JSON.stringify
+			    ({
+				username:username,
+				password:password
+			    })
+            }
+							            );
+
+        const data = await response.json();
+
+        console.log(data)
+        if(response.ok)
+        {
+        localStorage.setItem('accessToken',data.access);
+        updateNavbar();
+        await getProfile();
+        document.getElementById("loginMessage").innerHTML="Login successful";
+        closeLogin();
+        }
+        else
+        {
+        document.getElementById("loginMessage").innerHTML = data.detail;
+        }
+}
+
+
+
+
+async function getProfile() {
+
+    const token =
+    localStorage.getItem(
+        "accessToken"
+    );
+
+
+    const response =
+    await fetch(
+        "/api/auth/profile/",
+        {
+
+            method: "GET",
+
+            headers: {
+
+                Authorization:
+                `Bearer ${token}`
+            }
+        }
+    );
+
+
+    const data =
+    await response.json();
+
+
+    console.log(data);
+
+
+    if(response.ok)
+    {
         document.getElementById(
-            "signupForm"
-        );
+            "accountButton"
+        ).innerHTML =
 
-    if (form.style.display === "none") {
+        `👤 ${data.username} ▼`;
+    }
+    else
+    {
+    localStorage.removeItem("accessToken");
 
-        form.style.display = "block";
-
-    } else {
-
-        form.style.display = "none";
     }
 }
 
-async function signupUser() {
+ async function updateNavbar() {
+
+    const token = localStorage.getItem( "accessToken" );
+
+    if(token)
+    {
+
+
+        document.querySelector( ".dropdown-content" ).innerHTML =
+
+        `
+    <button onclick="getSavedJobs()">Saved Jobs</button>
+    <button onclick="logoutUser()">Logout</button>
+        `
+    ;
+    await getProfile();
+    }
+}
+
+
+async function getSavedJobs(){
+
+    const token = localStorage.getItem("accessToken");
+    const response = await fetch("/api/jobs/get/saved-jobs/",{
+        method:"GET",
+        headers: {
+            Authorization:`Bearer ${token}`
+                    }
+
+
+                                                       })
+
+
+    const jobs = await response.json()
+    console.log(jobs);
+
+
+    let output = "<h2>Saved Jobs</h2>";
+
+    if (jobs.length === 0)
+    {
+        output +="<p>No jobs saved</p>";
+
+    }
+
+    jobs.forEach(job => {
+        output += `
+            <h3>${job.title}</h3>
+            <p>${job.company}</p>
+            <hr>
+
+        `;
+        });
+        document.getElementById("result").innerHTML=output;
+   }
+
+
+
+
+
+function logoutUser() {
+
+    localStorage.removeItem(
+        "accessToken"
+    );
+
+
+    location.reload();
+}
+
+
+
+
+
+
+
+        /* TEMP SIGNUP */
+
+        async function signupUser() {
 
     const username =document.getElementById("signupUsername").value;
 
@@ -142,9 +675,16 @@ async function signupUser() {
         if (response.ok)
         {
             document.getElementById("signupMessage").innerHTML = data.message;
-            document.getElementById("signupForm").style.display="none";
+            document.getElementById("signupUsername").value="";
+            document.getElementById("signupEmail").value="";
+            document.getElementById("signupPassword").value="";
+            setTimeout(()=> {closeSignup();},1000);
+
+
+
         }
-        else  {
+else
+        {
 
     let errorMessage = "";
 
@@ -163,81 +703,9 @@ async function signupUser() {
 }
 
 
-
-</script>
-
-
-<br><br>
-
-<button onclick="showLogin()">Login</button>
-    <div id="LoginForm" style="display:none;">
-        <h2>Already a User</h2>
-
-    <input
-        type="text"
-        id="LoginUsername"
-        placeholder="Enter username"
-    >
-        <br><br>
-
-    <input
-        type="password"
-        id="LoginPassword"
-        placeholder="Enter password"
-    >
-
-<br><br>
-
-<button onclick="LoginUser()">Login</button>
-
-</div>
-<script>
-
-function showLogin() {
-
-    const form =
-        document.getElementById(
-            "LoginForm"
-        );
-
-    if (form.style.display === "none") {
-
-        form.style.display = "block";
-
-    } else {
-
-        form.style.display = "none";
-    }
-}
-
-
-async function LoginUser(){
-
-    const username=document.getElementById("LoginUsername").value;
-    const password=document.getElementById("LoginPassword").value;
-
-    const response = await fetch("/api/token",
-        {
-	        method:"POST",
-	        headers:
-		        {"Content-Type":"application/json"},
-			    body: JSON.stringify
-			({
-				username:username,
-				password:password
-			})
-        }
-							);
-
-const data = await response.json();
-
-console.log(data);
-localStorage.setItem('accessToken',data.access);
-}
-
-
-</script>
-
+ updateNavbar();
+    </script>
 
 </body>
+
 </html>

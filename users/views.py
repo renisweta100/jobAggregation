@@ -21,11 +21,15 @@ class HelloView(APIView):
 
 @api_view(['GET'])
 @permission_classes([IsAuthenticated])
-def protected(request):
+def protectedProfile(request):
 
     serializer = UserSerializer(request.user)
 
-    return Response(serializer.data)
+    return Response({"username": request.user.username,"message":"Protected API working"})
+
+
+
+
 
 
 @api_view(['POST'])
